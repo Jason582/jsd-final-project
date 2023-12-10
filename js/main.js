@@ -152,8 +152,8 @@ getDefaultWeather();
 
 function getDefaultWeather() { // The getDefaultWeather function gets the user's location from localStorage
     // Use the browser's geolocation API to get the user's location
-    navigator.geolocation.getCurrentPosition(
-        function (position) {
+    navigator.geolocation.getCurrentPosition( // The getCurrentPosition() method is called to get the user's location
+        function (position) { // The success callback is called when the position is successfully retrieved
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
 
@@ -215,7 +215,8 @@ function displayWeatherForecast(data) {
         // The classList.add() method adds the forecast-item class to the forecast item
   
         // Populate the forecast item with data
-        forecastItem.innerHTML = // The forecastItem variable contains the DOM element that will display the forecast item
+        forecastItem.innerHTML = 
+        // The forecastItem variable contains the DOM element that will display the forecast item
         `<p>${data.daily.time[i]}</p>
           <p>Max: ${data.daily.temperature_2m_max[i]} °C</p>
           <p>Min: ${data.daily.temperature_2m_min[i]} °C</p>
@@ -250,13 +251,13 @@ const backgroundImages = [ // Array of image URLs
 
 let currentIndex = 0; // The currentIndex variable contains the index of the current image
 
-function changeBackgroundImage() {
+function changeBackgroundImage() { // The changeBackgroundImage function changes the background image
     backgroundImageElement.src = backgroundImages[currentIndex];
-
+    // The backgroundImageElement variable contains the DOM element that will display the background image
     currentIndex = (currentIndex + 1) % backgroundImages.length;
-}
+} // The changeBackgroundImage function changes the background image
 
-changeBackgroundImage();
-setInterval(changeBackgroundImage, 4000);
+changeBackgroundImage(); // Call the changeBackgroundImage function
+setInterval(changeBackgroundImage, 4000); // The setInterval() method calls the changeBackgroundImage function every 4 seconds
 
 });
