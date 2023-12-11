@@ -189,11 +189,11 @@ background-img, background-img-1, background-img-2 {
   h1 {
       top: 2%;
       line-height: .8;
-      font-size: 8rem;
+      font-size: 6rem;
   }
 
   h2 {
-    padding: 5% 10% 5% 10%; /* Top, right, bottom, left */
+    padding: 5% 14% 5% 14%; /* Top, right, bottom, left */
       font-size: 3rem;
   }
 
@@ -222,7 +222,7 @@ background-img, background-img-1, background-img-2 {
     width: 500vw;
     z-index: 20;
     overflow: hidden;
-    top: 63%;
+    top: 58%;
     animation: moveItems 15s linear infinite;
   }
 
@@ -268,26 +268,4 @@ background-img, background-img-1, background-img-2 {
     animation: moveItems 2s cubic-bezier(0.42, 0, 0.58, 1) infinite;
 }
 
-
-  /* @keyframes moveItems {
-    0% {
-        opacity: 0;
-        transform: translateX(10%);
-    }
-  
-    33% {
-        opacity: 1;
-        transform: translateX(-10%);
-    }
-  
-    66% {
-        opacity: 1;
-        transform: translateX(-40%);
-    }
-  
-    100% {
-        opacity: 0;
-        transform: translateX(-70%);
-    }
-  } */
 }
