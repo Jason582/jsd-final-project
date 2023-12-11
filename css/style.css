@@ -244,12 +244,7 @@ p {
       width: 12%;
   }
 
-  #forecast {
-    width: 30%;
-    z-index: 20;
-    overflow: hidden;
-  }
-  
+
   @keyframes moveItems {
     0% {
         opacity: 0;
@@ -277,8 +272,10 @@ p {
     }
 }
 
-/* .element {
-    animation: moveItems 2s cubic-bezier(0.42, 0, 0.58, 1) infinite;
-} */
-
+  #forecast {
+    width: 30%;
+    z-index: 20;
+    overflow: hidden;
+  }
+  
 }
