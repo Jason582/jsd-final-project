@@ -258,6 +258,6 @@ function changeBackgroundImage() { // The changeBackgroundImage function changes
 } // The changeBackgroundImage function changes the background image
 
 changeBackgroundImage(); // Call the changeBackgroundImage function
-setInterval(changeBackgroundImage, 4000); // The setInterval() method calls the changeBackgroundImage function every 4 seconds
+setInterval(changeBackgroundImage, 10000); // The setInterval() method calls the changeBackgroundImage function every 4 seconds
 
 });
