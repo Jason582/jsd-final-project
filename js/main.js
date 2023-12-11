@@ -4,151 +4,165 @@
 
 // The GeolocationPosition object has two properties: coords and timestamp. The coords property is a GeolocationCoordinates object with the following properties: latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, and speed. The timestamp property is a DOMTimeStamp object with the time of the location fix.
 
+
+// THIS SETS UP THE LOCALSTORAGE WITH THE USER'S LOCATION - LAT LONG city_district//
 function saveUserLocation({ latitude, longitude, city_district }) { 
     // The saveUserLocation function takes the user's location as an argument
     localStorage.setItem('userLocation', JSON.stringify({ latitude, longitude, city_district })); 
-    console.log(localStorage);
+    console.log(`LocalStorage=`, localStorage);
     // The localStorage.setItem() method saves the user's location to localStorage
 };
 
+// SETUP THE PRELOADER WHILST THE API IS LOADING //
 document.addEventListener('DOMContentLoaded', function () { 
-// The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, 
-// without waiting for stylesheets, images, and subframes to finish loading.
-const preloader = document.getElementById('preloader'); 
-// The preloader variable contains the DOM element that will display the preloader
-const currentTempElement = document.getElementById('current-temperature'); 
-// The currentTempElement variable contains the DOM element that will display the current temperature
+    // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, 
+    // without waiting for stylesheets, images, and subframes to finish loading.
+    const preloader = document.getElementById('preloader'); 
+    // The preloader variable contains the DOM element that will display the preloader
+    const currentTempElement = document.getElementById('current-temperature'); 
+    // The currentTempElement variable contains the DOM element that will display the current temperature
+    // Show the preloader before making the API request so veiwer has something onscreen
+    preloader.style.display = 'flex';
 
-// Show the preloader before making the API request so veiwer has something onscreen
-preloader.style.display = 'flex';
-
-// Call the setupCurrentTemp function with your DOM element
-setupCurrentTemp(currentTempElement);
+    // Call the setupCurrentTemp function with your DOM element
+    // setupCurrentTemp(currentTempElement);
 }); // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, 
-// without waiting for stylesheets, images, and subframes to finish loading.
+    // without waiting for stylesheets, images, and subframes to finish loading.
 
-function setupCurrentTemp(currentTempElement) { // The setupCurrentTemp function takes the DOM element as an argument
-navigator.geolocation.getCurrentPosition( // The getCurrentPosition() method is called to get the user's location
-    function (position) { // The success callback is called when the position is successfully retrieved
-        const latitude = position.coords.latitude; // The latitude variable contains the latitude of the user's location
-        const longitude = position.coords.longitude; // The longitude variable contains the longitude of the user's location
+    function setupCurrentTemp(currentTempElement) {
+        // The setupCurrentTemp function takes the DOM element as an argument
+        navigator.geolocation.getCurrentPosition( 
+            // The getCurrentPosition() method is called to get the user's location
+            function (position) { // The success callback is called when the position is successfully retrieved
+                const latitude = position.coords.latitude; // The latitude variable contains the latitude of the user's location
+                const longitude = position.coords.longitude; // The longitude variable contains the longitude of the user's location
 
-        getCurrentTemp(latitude, longitude); // Call the getCurrentTemp function with the latitude and longitude
-    }, // The success callback is called when the position is successfully retrieved
-    function (error) { 
-        console.error('Error getting user location:', error);
-        // The error callback is called when the position is not successfully retrieved.
-        currentTempElement.innerHTML = 'Error getting user location.'; 
-    }
-);
-
-function getCurrentTemp(latitude, longitude) { // The getCurrentTemp function takes the latitude and longitude as arguments
-    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m`; // The apiUrl variable contains the API URL with the latitude and longitude
-
-    axios.get(apiUrl) // Use Axios for the HTTP request
-        .then(response => { // The then() method is called when the HTTP request is successful
-            const data = response.data; // The data variable contains the data from the response
-            console.log('API Response:', data); // The console.log() method logs the data from the response to the console
-
-            // Use reverse geocoding to get the city name based on latitude and longitude
-            getCityDistrict(latitude, longitude)
-                .then(city_district => {
-                    // Save the user's location to localStorage including the city name
-                    saveUserLocation({ latitude, longitude, city_district });
-                    console.log('city_district:', city_district);
-
-                    // Display the current weather result with the city
-                    showCurrentTemp(data, currentTempElement);
-
-                    // Hide the preloader after data retrieval
-                    preloader.style.display = 'none';
-                })
-                .catch(error => {
-                    console.error('Error getting city name:', error);
-                    // Handle error and hide preloader
-                    currentTempElement.innerHTML = 'Error getting city name.';
-                    preloader.style.display = 'none';
-                });
-        })
-        .catch(error => {
-            console.error('Error fetching weather data:', error);
-            // Handle error and hide preloader
-            currentTempElement.innerHTML = 'Error fetching weather data.'; // Handle error and hide preloader
-            preloader.style.display = 'none'; // Hide the preloader after data retrieval
-        });
-}
-
-// Function to perform forward geocoding and get the city name using OpenCage Geocoding API
-function getCityDistrict(latitude, longitude) { // The getCityDistrict function takes the latitude and longitude as arguments
-const apiKey = '7e460d39f6b740de8e6141ce9f1bee38';
-const forwardGeocodingApiUrl = `https://api.opencagedata.com/geocode/v1/json?key=${apiKey}&q=${latitude}+${longitude}&language=en`; // The forwardGeocodingApiUrl variable contains the API URL with the latitude and longitude and returns the city name
-
-return axios.get(forwardGeocodingApiUrl) // Use Axios for the HTTP request
-    .then(response => { // The then() method is called when the HTTP request is successful
-        const results = response.data.results; // The results variable contains the data from the response
-        // console.log('Geocoding API Response:', results);
-
-        if (results && results.length > 0) { // The if statement checks if the results array is not empty
-            const cityDistrictComponent = results[0].components.city_district; // The cityDistrictComponent variable contains the city name from the response
-
-            if (cityDistrictComponent) { // The if statement checks if the cityDistrictComponent variable is not empty
-                const city_district = cityDistrictComponent; // The city_district variable contains the city name from the response
-
-                // Save the user's location to localStorage including the district
-                saveUserLocation({ latitude, longitude, city_district }); 
-                // The saveUserLocation function takes the user's location as an argument
-
-                return city_district; // The return statement returns the city name
-            } else { // The else statement is executed when the cityDistrictComponent variable is empty
-                throw new Error('City district not found in forward geocoding response'); // The throw statement throws an error
-            }
-        } else { // The else statement is executed when the results array is empty
-            throw new Error('No results found in forward geocoding response'); // The throw statement throws an error
+            getCurrentTemp(latitude, longitude); 
+            // Call the getCurrentTemp function with the latitude and longitude
+            }, // The success callback is called when the position is successfully retrieved
+        function (error) { 
+            console.error('Error getting user location:', error);
+            // The error callback is called when the position is not successfully retrieved.
+            currentTempElement.innerHTML = 'Error getting user location.'; 
         }
-    })
-    .catch(error => { // The catch() method is called when the HTTP request is not successful
-        console.error('Error getting city district:', error); // The console.error() method logs the error to the console
-        throw error; // The throw statement throws an error
-    }); // The catch() method is called when the HTTP request is not successful
-}
+    );
 
-function showCurrentTemp(data, currentTempElement) { // The showCurrentTemp function takes the data and DOM element as arguments
-if (data.current && data.current.temperature_2m) { // The if statement checks if the data.current.temperature_2m property is not empty
-    const currentTemperature = data.current.temperature_2m; // The currentTemperature variable contains the current temperature from the response
+    function getCurrentTemp(latitude, longitude) { 
+        // The getCurrentTemp function takes the latitude and longitude as arguments
+        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m`; // The apiUrl variable contains the API URL with the latitude and longitude
 
-    // Retrieve the city information from localStorage
-    const userLocation = JSON.parse(localStorage.getItem('userLocation')); // The userLocation variable contains the user's location from localStorage
-    console.log('userLocation:', userLocation);
+        axios.get(apiUrl) // Use Axios for the HTTP request
+            .then(response => { // The then() method is called when the HTTP request is successful
+                const data = response.data; // The data variable contains the data from the response
+                console.log('API Response:', data); // The console.log() method logs the data from the response to the console
 
-    // Extract city from userLocation
-    const city_district = userLocation ? userLocation.city_district : 'Your Suburb'; 
-    // The city_district variable contains the city name from the user's location
+                // Use reverse geocoding to get the city name based on latitude and longitude
+                    getCityDistrict(latitude, longitude)
+                    .then(city_district => {
+                        // Save the user's location to localStorage including the city name
+                        saveUserLocation({ latitude, longitude, city_district });
+                        console.log('city_district:', city_district);
 
-    // Display the current weather result with the city
-    currentTempElement.innerHTML = `<h2>The current temperature in ${city_district} is: ${currentTemperature} °C</h2>`;
-} else {
-    currentTempElement.innerHTML = 'Error: Unable to retrieve current temperature data.';
-}
-}
-};
+                        // Display the current weather result with the city
+                        showCurrentTemp(data, currentTempElement);
+
+                        // Hide the preloader after data retrieval
+                        preloader.style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('Error getting city name:', error);
+                        // Handle error and hide preloader
+                        currentTempElement.innerHTML = 'Error getting city name.';
+                        preloader.style.display = 'none';
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching weather data:', error);
+                // Handle error and hide preloader
+                currentTempElement.innerHTML = 'Error fetching weather data.'; // Handle error and hide preloader
+                preloader.style.display = 'none'; // Hide the preloader after data retrieval
+            });
+        }
+
+    // Function to perform FORWARD GEOCODING and RETRIEVE the SUBURB LOCATION using OPENCAGE GEOCODING API
+    function getCityDistrict(latitude, longitude) { // The getCityDistrict function takes the latitude and longitude as arguments
+        const apiKey = '7e460d39f6b740de8e6141ce9f1bee38';
+        const forwardGeocodingApiUrl = `https://api.opencagedata.com/geocode/v1/json?key=${apiKey}&q=${latitude}+${longitude}&language=en`; 
+        // The forwardGeocodingApiUrl variable contains the API URL with the latitude and longitude and returns the city name
+
+            return axios.get(forwardGeocodingApiUrl) // Use Axios for the HTTP request
+            .then(response => { // The then() method is called when the HTTP request is successful
+                const results = response.data.results; // The results variable contains the data from the response
+                console.log('Geocoding API Response:', results); // The console.log() method logs the data from the response to the console
+
+                if (results && results.length > 0) { // The if statement checks if the results array is not empty
+                    const cityDistrictComponent = results[0].components.city_district; // To retrive the json data from the api
+                    // The cityDistrictComponent variable contains the city name from the response
+
+                    if (cityDistrictComponent) { // The if statement checks if the cityDistrictComponent variable is not empty
+                        const city_district = cityDistrictComponent; // The city_district variable contains the city name from the response
+
+                        // Save the user's location to localStorage including the district
+                        // saveUserLocation({ latitude, longitude, city_district }); 
+                        // The saveUserLocation function takes the user's location as an argument
+
+                        return city_district; // The return statement returns the city name
+                    } else { // The else statement is executed when the cityDistrictComponent variable is empty
+                        throw new Error('City district not found in forward geocoding response'); // The throw statement throws an error
+                    }
+                } else { // The else statement is executed when the results array is empty
+                    throw new Error('No results found in forward geocoding response'); // The throw statement throws an error
+                }
+            })
+                .catch(error => { // The catch() method is called when the HTTP request is not successful
+                    console.error('Error getting city district:', error); // The console.error() method logs the error to the console
+                    throw error; // The throw statement throws an error
+            }); // The catch() method is called when the HTTP request is not successful
+    }
+
+
+    // THIS DISPLAYS THE CURRENT TEMPERATURE IN YOUR SUBURB USING THE city_district(Suburb) and currentTemeperature //
+    function showCurrentTemp(data, currentTempElement) { 
+        // The showCurrentTemp function takes the data and DOM element as arguments
+        if (data.current && data.current.temperature_2m) { 
+        // The if statement checks if the data.current.temperature_2m property is not empty
+        const currentTemperature = data.current.temperature_2m; 
+        // The currentTemperature variable contains the current temperature from the response
+
+        // Retrieve the city information from localStorage
+        const userLocation = JSON.parse(localStorage.getItem('userLocation')); 
+        // The userLocation variable contains the user's location from localStorage
+        console.log('userLocation:', userLocation);
+
+        // Extract city from userLocation
+        const city_district = userLocation ? userLocation.city_district : 'Your Suburb'; 
+        // The city_district variable contains the city name from the user's location
+
+        // Display the current weather result with the suburb
+        currentTempElement.innerHTML = `<h2>The current temperature in ${city_district} is: ${currentTemperature} °C</h2>`;
+    } else {
+        currentTempElement.innerHTML = 'Error: Unable to retrieve current temperature data.';
+            }
+        }
+    };
 
 // Call the function with your DOM element
 document.addEventListener('DOMContentLoaded', function () { 
-// The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
-const currentTempDiv = document.getElementById('current-temperature'); 
-// The currentTempDiv variable contains the DOM element that will display the current temperature
+    // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
+    const currentTempDiv = document.getElementById('current-temperature'); 
+    // The currentTempDiv variable contains the DOM element that will display the current temperature
 
-// Call the setupCurrentTemp function with your DOM element
-setupCurrentTemp(currentTempDiv);
+    // Call the setupCurrentTemp function with your DOM element
+    setupCurrentTemp(currentTempDiv);
 });
 
 document.addEventListener('DOMContentLoaded', function () { 
-// The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
-const forecastDiv = document.getElementById('forecast'); 
-// The forecastDiv variable contains the DOM element that will display the weather forecast
+    // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
+    const forecastDiv = document.getElementById('forecast'); 
+    // The forecastDiv variable contains the DOM element that will display the weather forecast
 
-// Get default weather and forecast based on user's location
-getDefaultWeather();
+    // Get default weather and forecast based on user's location
+    getDefaultWeather(); // 7 day forecast
 
 function getDefaultWeather() { // The getDefaultWeather function gets the user's location from localStorage
     // Use the browser's geolocation API to get the user's location
@@ -161,7 +175,7 @@ function getDefaultWeather() { // The getDefaultWeather function gets the user's
             getWeatherAndForecast(latitude, longitude);
 
             // Save the user's location to localStorage
-            saveUserLocation({ latitude, longitude });
+            // saveUserLocation({ latitude, longitude });
         },
         function (error) { // The error callback is called when the position is not successfully retrieved.
             console.error('Error getting user location:', error); // The error callback is called when the position is not successfully retrieved.
@@ -170,6 +184,7 @@ function getDefaultWeather() { // The getDefaultWeather function gets the user's
     );
 }
 
+// THIS GETS THE 7 DAYS FORECAST //
 function getWeatherAndForecast(latitude, longitude) { 
     // The getWeatherAndForecast function takes the user's location as arguments
     const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`; 
@@ -184,7 +199,7 @@ function getWeatherAndForecast(latitude, longitude) {
             // Display weather forecast for the next 5 days
             displayWeatherForecast(data); 
             // Call the displayWeatherForecast function with the data from the response
-            console.log(data); // The console.log() method logs the data from the response to the console
+            // console.log(data); // The console.log() method logs the data from the response to the console
         })
         .catch(error => { // The catch() method is called when the HTTP request is not successful
             console.error('Error fetching weather data:', error); // Handle the error
@@ -192,6 +207,7 @@ function getWeatherAndForecast(latitude, longitude) {
         }); // Handle the error
 }
 
+// THIS DISPLAYS THE 7 DAY FORECAST //
 function displayWeatherForecast(data) { 
     // The displayWeatherForecast function takes the data from the response as an argument
     const forecastItemsContainer = document.getElementById('forecast-items'); 
@@ -225,14 +241,16 @@ function displayWeatherForecast(data) {
   
         // The appendChild() method appends the forecast item to the container
         forecastItemsContainer.appendChild(forecastItem); 
+        console.log(forecastItem); // The console.log() method logs the forecast item (or items as in this case - 7 days forecast)  to the console
       }
     } else { // The else statement is executed when the data.daily.temperature_2m_max, data.daily.temperature_2m_min, data.daily.precipitation_sum, and data.daily.time properties are empty
       forecastItemsContainer.innerHTML = 'Error: Unable to retrieve weather forecast data.'; // Handle the error
     }
   }
-
 }); // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
 
+
+// THIS LOADS AND DISPLAYS THE BACKGROUND IMAGES AND ANIMATIONS //
 document.addEventListener('DOMContentLoaded', function () { 
 // The DOMContentLoaded event fires when the initial HTML document has been completely 
 // loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
