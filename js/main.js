@@ -1,7 +1,16 @@
 
-// Lets make a simple weather app that calls an API and displays the current weather and forecast for the next 7 days. The Geolocation interface doesn't inherit any method.
-// Geolocation.getCurrentPosition() Secure context determines the device's current location and gives back a GeolocationPosition object with the data
-// The GeolocationPosition object has two properties: coords and timestamp. The coords property is a GeolocationCoordinates object with the following properties: latitude, longitude, altitude, accuracy, altitudeAccuracy, heading, and speed. The timestamp property is a DOMTimeStamp object with the time of the location fix.
+
+// **************************************************************************************************************
+// THIS IS A JAVASCRIPT WEATHER APP THAT UTILIZES THE OPEN METEO API & THE OPENCAGE GEOCODING API TO FETCH THE CURRENT WEATHER
+//  AND 7 DAY FORECAST FOR THE USER'S LOCATION. IT ALSO PROVIDES FUNTIONALITY TO CHANGE THE BACKGROUND IMAGE EVERY 10 SECONDS 
+// AND SAVE THE USERS LOCATION IN THE BROWSERS LOCAL STORAGE TO RETRIEVE LATER WITHOUT MAKING ANOTHER API REQUEST.
+// **************************************************************************************************************
+
+
+
+// ======================================================================================================================================
+// **********************************************              FUNCTIONS           ***************************************************
+// ======================================================================================================================================
 
 
 // THIS SETS UP THE GLOBAL OBJECT PROPERTY LOCALSTORAGE WITH THE USER'S LOCATION - LAT LONG city_district//
@@ -11,8 +20,8 @@ function saveUserLocation({ latitude, longitude, city_district }) {
     // The saveUserLocation function takes the user's location as an argument
 
     localStorage.setItem('userLocation', JSON.stringify({ latitude, longitude, city_district }));
-    // using the 'userLocation' key the localStorage.setItem() method saves the user's location to localStorage
-    // JSON.stringify() method to convert the object to a string
+    // Takes an OBJECT with latitude, longitude, and city_district properties as an argument.
+    // Stores the user's location information in the browser's local storage under the key 'userLocation' as a JSON string.
 
     // ***************************************************************************************
 
@@ -30,15 +39,16 @@ function setupCurrentTemp(currentTempElement) {
     // The setupCurrentTemp function takes the DOM element (currentTempElement) as the argument
 
     navigator.geolocation.getCurrentPosition(
-        // The getCurrentPosition() method is called to get the user's location
+        // The getCurrentPosition() method is called to get the user's location information
         function (position) { // The SUCCESS callback is called when the position is successfully retrieved
 
             const latitude = position.coords.latitude; // The latitude variable contains the latitude of the user's location
             const longitude = position.coords.longitude; // The longitude variable contains the longitude of the user's location
 
-            getCurrentTemp(latitude, longitude);
-            // Call the getCurrentTemp function with the latitude and longitude so that the function
-            //  getCurrentTemp can make an API request to get the current temperature
+            // On success, it calls the getCurrentTemp function to fetch and display the current temperature based on the user's location.
+
+            getCurrentTemp(latitude, longitude); // getCurrentTemp can make an API request to get the current temperature
+
         }, // The success callback is called when the position is successfully retrieved
 
         function (error) {
@@ -53,8 +63,8 @@ function setupCurrentTemp(currentTempElement) {
 
     function getCurrentTemp(latitude, longitude) {
 
-        // The getCurrentTemp function takes the latitude and longitude as arguments then constructs the API URL
-        // using the provided lat and long to fetch weather data - the current temperature at 2mtres above ground level.
+        // The getCurrentTemp function takes the latitude and longitude as arguments then 
+        // Constructs the API URL for Open Meteo to get the current temperature - 2mtres above ground level
 
         const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m`;
         // The apiUrl variable contains the API URL with the latitude and longitude
@@ -65,10 +75,9 @@ function setupCurrentTemp(currentTempElement) {
             .then(response => { // The then() method is called when the HTTP request is successful
                 const data = response.data; // The data variable contains the data from the response
 
-                console.log('API Response:', data);
-                // The console.log() method logs the data from the response to the console - if successful
+                console.log('API Response:', data); // for debugging etc - to see the data in the console
 
-                // REVERSE GEOCODING TO GET SUBURB NAME
+                // 'Success' calls the getCityDistrict function - to REVERSE GEOCODE THE SUBURB NAME
                 getCityDistrict(latitude, longitude)
                     // getCityDistrict() function to perform reverse geocoding and get the suburbs name 
                     //based on the latitude and longitude returned by the getCurrentPosition() method
@@ -83,8 +92,8 @@ function setupCurrentTemp(currentTempElement) {
                         // If successful, calls saveUserLocation to save the user's 
                         // location to localStorage along with the city_district name.
 
-                        // Display the current weather result with the city
-                        showCurrentTemp(data, currentTempElement); // see line 154 for function
+                        // Displays the current temperature
+                        showCurrentTemp(data, currentTempElement); // refer 174 for function
 
                         // Hide the preloader after data retrieval
                         preloader.style.display = 'none';
@@ -109,14 +118,16 @@ function setupCurrentTemp(currentTempElement) {
                 preloader.style.display = 'none'; // Hide the preloader after data retrieval
 
             });
-    }
+    } // getCurrentTemp
+
 
     //  Using the OPENCAGE GEOCODING API for FORWARD GEOCODING and RETRIEVE the SUBURB LOCATION
 
     function getCityDistrict(latitude, longitude) { // The getCityDistrict function takes the latitude and longitude as arguments
+
         const apiKey = '7e460d39f6b740de8e6141ce9f1bee38';
         const forwardGeocodingApiUrl = `https://api.opencagedata.com/geocode/v1/json?key=${apiKey}&q=${latitude}+${longitude}&language=en`;
-        // The forwardGeocodingApiUrl variable contains the API URL with the latitude and longitude and returns the city name
+        // The forwardGeocodingApiUrl variable uses OpenCage Geocoding API to perform forward geocoding and retrieve the suburb (city_district) name.
 
         return axios.get(forwardGeocodingApiUrl) // Use Axios for the HTTP request
 
@@ -136,7 +147,7 @@ function setupCurrentTemp(currentTempElement) {
                         saveUserLocation({ latitude, longitude, city_district });
                         // The saveUserLocation function takes the user's location as an argument
 
-                        return city_district; // The return statement returns the city name
+                        return city_district; // The return statement returns the suburb name
 
                     } else { // The else statement is executed when the cityDistrictComponent variable is empty
 
@@ -155,7 +166,8 @@ function setupCurrentTemp(currentTempElement) {
                 throw error; // The throw statement throws an error
 
             }); // The catch() method is called when the HTTP request is not successful
-    }
+
+    }; // getCityDistrict
 
 
     // THIS DISPLAYS THE CURRENT TEMPERATURE IN YOUR SUBURB USING THE city_district(Suburb) and currentTemperature variables //
@@ -182,7 +194,7 @@ function setupCurrentTemp(currentTempElement) {
             // Checks if userLocation is truthy (not null or undefined) and assigns the city_district property to the city_district variable.
             //  If userLocation is falsy, assigns the string 'Your Suburb' to the city_district variable.
 
-            // Displaying the current weather result with the suburb and information retrieved from the API
+            // Displaying ON PAGEthe current weather result with the suburb and information retrieved from the API
             currentTempElement.innerHTML = `<h2>The current temperature in ${city_district} is: ${currentTemperature} °C</h2>`;
 
         } else {
@@ -190,13 +202,105 @@ function setupCurrentTemp(currentTempElement) {
             currentTempElement.innerHTML = 'Error: Unable to retrieve current temperature data.'; // Handle the error
         }
     }
-};
+}; // setupCurrentTemp
+
+
+// THIS GETS THE 7 DAYS FORECAST //the getWeatherAndForecast function fetches weather and forecast data from the Open Meteo API based on the provided latitude and longitude. It uses Axios for the HTTP request, handles both successful and error cases, and calls a function (displayWeatherForecast) to handle the rendering of the weather forecast on the page.
+
+
+function getWeatherAndForecast(latitude, longitude) {
+    // The getWeatherAndForecast function takes the user's location (latitude & longitude) as arguments
+
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`;
+    // Constructs an API URL for fetching weather and forecast data based on the provided latitude and longitude. The URL includes parameters like daily=temperature_2m_max,temperature_2m_min,precipitation_sum to request daily maximum and minimum temperatures, as well as precipitation data.
+
+    // Uses Axios to make a GET request to the specified API URL - HTTP request
+    axios.get(apiUrl) // The then() method is called when the HTTP request is successful
+
+        .then(response => { // The then() method is called when the HTTP request is SUCCESSFUL
+            // Handle the data from the response
+
+            const data = response.data; // If the HTTP request is successful, extracts the data from the response and assigns it to the variable data.
+
+            // Calls the displayWeatherForecast function with the obtained data to handle the display of the 7 days weather forecast
+            displayWeatherForecast(data);
+            // Call the displayWeatherForecast function with the data from the response
+
+            // console.log(data); // The console.log() method logs the data from the response to the console
+        })
+        .catch(error => { // The catch() method is called when the HTTP request is NOT SUCCESSFUL
+
+            console.error('Error fetching weather data:', error); // Handle the error
+            forecastDiv.innerHTML = 'Error fetching weather data.'; // Handle the error
+
+        }); // Handle the error
+}; // getWeatherAndForecast
+
+
+// THIS DISPLAYS THE 7 DAY FORECAST // the displayWeatherForecast function is responsible for rendering the 7-day weather forecast on the web page based on the data received from the weather API. It creates individual forecast items for each day and appends them to the forecast container. If there's an issue with the data, it displays an error message in the forecast container.
+
+function displayWeatherForecast(data) {
+
+    // Declares a function named displayWeatherForecast that takes data from the weather API response as an argument.
+    const forecastItemsContainer = document.getElementById('forecast-items');
+    // The forecastItemsContainer variable contains the DOM element that will display the weather forecast - ID 'forecast-items'
+
+    if ( // The if statement checks if the data.daily.temperature_2m_max, data.daily.temperature_2m_min, data.daily.precipitation_sum, and data.daily.time properties are not empty - if true, the code inside the if statement is executed
+        data.daily &&
+        data.daily.temperature_2m_max &&
+        data.daily.temperature_2m_min &&
+        data.daily.precipitation_sum &&
+        data.daily.time
+
+    ) {
+
+        // Clear previous forecast items first
+        forecastItemsContainer.innerHTML = '';
+
+        for (let i = 0; i < data.daily.time.length; i++) { // The for loop iterates through the data.daily.time array
+
+            // Create a forecast item element
+            const forecastItem = document.createElement('div');
+            // The forecastItem variable contains the DOM element that will display the forecast item
+
+            forecastItem.classList.add('forecast-item');
+            // The classList.add() method adds the forecast-item class to the forecast item
+
+            // Populate the forecast item with data
+
+            forecastItem.innerHTML =
+
+                // Uses a for loop to iterate through the data.daily.time array, creating a forecast item for each day.
+                // Creates a div element for each forecast item and sets its class to 'forecast-item'.
+                // Populates each forecast item with information such as the date, maximum temperature, minimum temperature, and precipitation.
+
+                `<p>${data.daily.time[i]}</p>
+                            <p>Max: ${data.daily.temperature_2m_max[i]} °C</p>
+                            <p>Min: ${data.daily.temperature_2m_min[i]} °C</p>
+                            <p>Rain: ${data.daily.precipitation_sum[i]} mm</p>
+                            `;
+
+            // The appendChild() method appends the forecast item to the container
+            forecastItemsContainer.appendChild(forecastItem);
+
+            // console.log(forecastItem); 
+            // The console.log() method logs the forecast item (or items as in this case - 7 days forecast)  to the console
+        }
+
+    } else { // The else statement is executed when the data.daily.temperature_2m_max, data.daily.temperature_2m_min, data.daily.precipitation_sum, and data.daily.time properties are empty
+
+        forecastItemsContainer.innerHTML = 'Error: Unable to retrieve weather forecast data.'; // Handle the error
+
+    }
+}; // displayWeatherForecast
+
 
 // ======================================================================================================================================
+// **********************************************              EVENT LISTENERS           *****************  *****************************
 // ======================================================================================================================================
 
-// EVENT LISTENERS 
-// SETUP THE PRELOADER WHILST THE API IS LOADING //
+
+// EVENT LISTENER - SETUP THE PRELOADER WHILST THE API IS LOADING
 // Initial setup of page - preloader and current temperature
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -216,16 +320,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // This function is called and displays the current temperature through the ID 'current-temperature' DOM element
     setupCurrentTemp(currentTempElement);
 
-}); // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
-
-// ======================================================================================================================================
-
-// 2 EVENT LISTENERS FOR THE DOMCONTENTLOADED EVENT 
-// the code sets up event listeners for the DOMContentLoaded event, retrieves DOM elements for displaying current temperature and forecast, calls functions to set up the display of current temperature, and initiates the process of getting weather and forecast data based on the user's location using the geolocation API.
-// - and 2. for the 7 day forecast - ('forecast')
-
-document.addEventListener('DOMContentLoaded', function () { // Second Event Listener
-    // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
+    // Retrieves DOM elements for displaying current temperature and forecast, calls functions to set up the display of current temperature, 
+    // and initiates the process of getting weather and forecast data based on the user's location using the geolocation API.
+    // and for the 7 day forecast - ('forecast')
 
     const forecastDiv = document.getElementById('forecast');
     // The forecastDiv variable contains the DOM element that will display the 7 day weather forecast
@@ -262,101 +359,7 @@ document.addEventListener('DOMContentLoaded', function () { // Second Event List
         );
     }
 
-    // THIS GETS THE 7 DAYS FORECAST //the getWeatherAndForecast function fetches weather and forecast data from the Open Meteo API based on the provided latitude and longitude. It uses Axios for the HTTP request, handles both successful and error cases, and calls a function (displayWeatherForecast) to handle the rendering of the weather forecast on the page.
-
-
-    function getWeatherAndForecast(latitude, longitude) {
-        // The getWeatherAndForecast function takes the user's location (latitude & longitude) as arguments
-
-        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`;
-        // Constructs an API URL for fetching weather and forecast data based on the provided latitude and longitude. The URL includes parameters like daily=temperature_2m_max,temperature_2m_min,precipitation_sum to request daily maximum and minimum temperatures, as well as precipitation data.
-
-        // Uses Axios to make a GET request to the specified API URL - HTTP request
-        axios.get(apiUrl) // The then() method is called when the HTTP request is successful
-
-            .then(response => { // The then() method is called when the HTTP request is SUCCESSFUL
-                // Handle the data from the response
-
-                const data = response.data; // If the HTTP request is successful, extracts the data from the response and assigns it to the variable data.
-
-                // Calls the displayWeatherForecast function with the obtained data to handle the display of the 7 days weather forecast
-                displayWeatherForecast(data);
-                // Call the displayWeatherForecast function with the data from the response
-
-                // console.log(data); // The console.log() method logs the data from the response to the console
-            })
-            .catch(error => { // The catch() method is called when the HTTP request is NOT SUCCESSFUL
-
-                console.error('Error fetching weather data:', error); // Handle the error
-                forecastDiv.innerHTML = 'Error fetching weather data.'; // Handle the error
-
-            }); // Handle the error
-    }
-
-
-    // THIS DISPLAYS THE 7 DAY FORECAST // the displayWeatherForecast function is responsible for rendering the 7-day weather forecast on the web page based on the data received from the weather API. It creates individual forecast items for each day and appends them to the forecast container. If there's an issue with the data, it displays an error message in the forecast container.
-
-    function displayWeatherForecast(data) {
-
-        // Declares a function named displayWeatherForecast that takes data from the weather API response as an argument.
-        const forecastItemsContainer = document.getElementById('forecast-items');
-        // The forecastItemsContainer variable contains the DOM element that will display the weather forecast - ID 'forecast-items'
-
-        if ( // The if statement checks if the data.daily.temperature_2m_max, data.daily.temperature_2m_min, data.daily.precipitation_sum, and data.daily.time properties are not empty - if true, the code inside the if statement is executed
-            data.daily &&
-            data.daily.temperature_2m_max &&
-            data.daily.temperature_2m_min &&
-            data.daily.precipitation_sum &&
-            data.daily.time
-
-        ) {
-
-            // Clear previous forecast items first
-            forecastItemsContainer.innerHTML = '';
-
-            for (let i = 0; i < data.daily.time.length; i++) { // The for loop iterates through the data.daily.time array
-
-                // Create a forecast item element
-                const forecastItem = document.createElement('div');
-                // The forecastItem variable contains the DOM element that will display the forecast item
-
-                forecastItem.classList.add('forecast-item');
-                // The classList.add() method adds the forecast-item class to the forecast item
-
-                // Populate the forecast item with data
-
-                forecastItem.innerHTML =
-
-                    // Uses a for loop to iterate through the data.daily.time array, creating a forecast item for each day.
-                    // Creates a div element for each forecast item and sets its class to 'forecast-item'.
-                    // Populates each forecast item with information such as the date, maximum temperature, minimum temperature, and precipitation.
-
-                    `<p>${data.daily.time[i]}</p>
-                            <p>Max: ${data.daily.temperature_2m_max[i]} °C</p>
-                            <p>Min: ${data.daily.temperature_2m_min[i]} °C</p>
-                            <p>Rain: ${data.daily.precipitation_sum[i]} mm</p>
-                            `;
-
-                // The appendChild() method appends the forecast item to the container
-                forecastItemsContainer.appendChild(forecastItem);
-
-                // console.log(forecastItem); 
-                // The console.log() method logs the forecast item (or items as in this case - 7 days forecast)  to the console
-            }
-
-        } else { // The else statement is executed when the data.daily.temperature_2m_max, data.daily.temperature_2m_min, data.daily.precipitation_sum, and data.daily.time properties are empty
-
-            forecastItemsContainer.innerHTML = 'Error: Unable to retrieve weather forecast data.'; // Handle the error
-
-        }
-    }
-}); // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
-
-
-// THIS LOADS AND DISPLAYS THE BACKGROUND IMAGES AND ANIMATIONS //
-
-document.addEventListener('DOMContentLoaded', function () {
-
+    // THIS LOADS AND DISPLAYS THE BACKGROUND IMAGES AND ANIMATIONS //
     // The DOMContentLoaded event fires when the initial HTML document has been completely 
     // loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
 
@@ -397,4 +400,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // Sets up an interval using setInterval to call changeBackgroundImage every 
     // 10,000 milliseconds (10 seconds), creating a slideshow-like animation of background images.
 
-});
+
+}); // The DOMContentLoaded event fires when the initial HTML document has been completely loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.

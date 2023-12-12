@@ -1,17 +1,45 @@
 # Final-Project
 
-I wanted to create a weather app that would instantly show 'your current weather outlook and suburb - as a quick lookup to plan out a 7 day schedule.
+This is a weather application that utilizes the Open Meteo API and the OpenCage Geocoding API to fetch the current weather and a 7-day forecast based on the user's location. It also includes functionality to change the background image every 10 seconds (plus a zooming effect CSS based) and saves the user's location in the browser's local storage for future retrieval without making additional API requests.
 
-I wanted to display this on Desktop and Mobile so it is responsive - however, this could be expanded down the track to include tablet sizes and slightly larger displays... also, at the moment this is optimised for a 16inch desktop screen, and iphone.
+Heres a breakdown:
 
-The app uses geolocation to return a users latitude and longitude to be used to send to 2 different api's that return a json data pack back and get interpreted onto the page.
+1. saveUserLocation Function:
+Purpose: Saves the user's location (latitude, longitude, and city_district) in the browser's local storage.
+How it works: Accepts an object containing latitude, longitude, and city_district properties, converts it to a JSON string, and stores it in the localStorage with the key 'userLocation'.
 
-But instead of just returning the data weather and your suburb location, I wanted to include some background images that reflect weather themes - these are random web images that loop thru and have slight animations applied to them in CSS animations and using set-interval in javascript to determine the time changes for each image.
+2. setupCurrentTemp Function:
+Purpose: Initiates the process of obtaining the user's geolocation and, upon success, calls the getCurrentTemp function to fetch and display the current temperature.
+How it works: Uses navigator.geolocation.getCurrentPosition to get the user's current position. If successful, it calls getCurrentTemp with the latitude and longitude.
 
-The timings were a little tricky to get right, as there is a slight zoom effect that needs to be synchromized with the set interval - this took a bit of tweaking to get right.
+3. getCurrentTemp Function:
+Purpose: Fetches the current temperature from the Open Meteo API and handles the response.
+How it works: Constructs the API URL, makes a GET request using Axios, and processes the response. It also uses the OpenCage Geocoding API to perform reverse geocoding and get the suburb name based on the latitude and longitude.
 
-I am more of a visual-graphic person so visuals are important to me in terms of how it looks on screen - hence I do like using CSS when I can - this project will no doubt change down the road so that it 'looks' more refined.
+4. getCityDistrict Function:
+Purpose: Performs forward geocoding using the OpenCage Geocoding API to retrieve the suburb (city_district) name.
+How it works: Constructs the API URL, makes a GET request using Axios, and processes the response to extract the suburb name.
 
-I have used localStorage to store key data from the users location (which is called upon when returning the weather patterns and 'suburb' location)
+5. showCurrentTemp Function:
+Purpose: Displays the current temperature on the page, including the suburb name.
+How it works: Extracts the current temperature and suburb name from the API response and displays the information on the page.
 
-I do enjoy the localStorage feature and can see so many things that you could use this for.
+6. getWeatherAndForecast Function:
+Purpose: Fetches weather and forecast data from the Open Meteo API based on the provided latitude and longitude.
+How it works: Constructs the API URL, makes a GET request using Axios, and calls displayWeatherForecast to handle rendering the 7-day forecast.
+
+7. displayWeatherForecast Function:
+Purpose: Renders the 7-day weather forecast on the web page.
+How it works: Creates forecast items for each day and appends them to the forecast container. Handles errors if data is unavailable.
+
+8. Event Listeners:
+DOMContentLoaded Event Listener: Initiates the page setup, including displaying the preloader, current temperature, and initiating the process of getting weather and forecast data.
+Background Image Loading: Sets up an interval to change the background image every 10 seconds.
+
+Additional Notes:
+The code uses Axios for making HTTP requests.
+Background images are cycled every 10 seconds, creating a slideshow effect.
+Error handling is implemented for geolocation and API requests.
+It's a script that combines geolocation, weather API requests, background image cycling, and local storage for a dynamic weather application.
+
+FURTHER WORK: Would like to expand on the current design both visually and functionally, perhaps include features that convert 'date' json data to days of the week so it feels more personal. Could also perhaps include a form for users to check weather patterns somewhere else in case of future trips etc.
