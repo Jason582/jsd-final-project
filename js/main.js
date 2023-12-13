@@ -138,7 +138,6 @@ function setupCurrentTemp(currentTempElement) {
     } // getCurrentTemp
 
 
-
 // ======================================================================================================================================
 // *********************************     4   Reverse Geocoding (Getting City/Suburb Name)     **************************************
 // ======================================================================================================================================
@@ -164,6 +163,7 @@ function setupCurrentTemp(currentTempElement) {
                     // The cityDistrictComponent variable contains the suburb name from the response
 
                     if (cityDistrictComponent) { // The if statement checks if the cityDistrictComponent variable is not empty
+
                         const city_district = cityDistrictComponent; // The city_district variable contains the city name from the response
 
                         // Save the user's location to localStorage including the district
@@ -221,7 +221,7 @@ function setupCurrentTemp(currentTempElement) {
             // Checks if userLocation is truthy (not null or undefined) and assigns the city_district property to the city_district variable.
             //  If userLocation is falsy, assigns the string 'Your Suburb' to the city_district variable.
 
-            // Displaying ON PAGEthe current weather result with the suburb and information retrieved from the API
+            // Displaying ON PAGE the current weather result with the suburb and information retrieved from the API
             currentTempElement.innerHTML = `<h2>The current temperature in ${city_district} is: ${currentTemperature} °C</h2>`;
 
         } else {
@@ -259,7 +259,8 @@ function getWeatherAndForecast(latitude, longitude) {
             displayWeatherForecast(data);
             // Call the displayWeatherForecast function with the data from the response
 
-            // console.log(data); // The console.log() method logs the data from the response to the console
+            console.log(data); // The console.log() method logs the data from the response to the console
+
         })
         .catch(error => { // The catch() method is called when the HTTP request is NOT SUCCESSFUL
 
@@ -287,6 +288,7 @@ function displayWeatherForecast(data) {
     // The forecastItemsContainer variable contains the DOM element that will display the weather forecast - ID 'forecast-items'
 
     if ( // The if statement checks if the data.daily.temperature_2m_max, data.daily.temperature_2m_min, data.daily.precipitation_sum, and data.daily.time properties are not empty - if true, the code inside the if statement is executed
+
         data.daily &&
         data.daily.temperature_2m_max &&
         data.daily.temperature_2m_min &&
@@ -315,7 +317,7 @@ function displayWeatherForecast(data) {
                 // Creates a div element for each forecast item and sets its class to 'forecast-item'.
                 // Populates each forecast item with information such as the date, maximum temperature, minimum temperature, and precipitation.
 
-                `<p>${data.daily.time[i]}</p>
+                            `<p>${data.daily.time[i]}</p>
                             <p>Max: ${data.daily.temperature_2m_max[i]} °C</p>
                             <p>Min: ${data.daily.temperature_2m_min[i]} °C</p>
                             <p>Rain: ${data.daily.precipitation_sum[i]} mm</p>
@@ -324,7 +326,7 @@ function displayWeatherForecast(data) {
             // The appendChild() method appends the forecast item to the container
             forecastItemsContainer.appendChild(forecastItem);
 
-            // console.log(forecastItem); 
+            console.log(forecastItem); 
             // The console.log() method logs the forecast item (or items as in this case - 7 days forecast)  to the console
         }
 
@@ -336,11 +338,14 @@ function displayWeatherForecast(data) {
 }; // displayWeatherForecast
 
 
+
 // ======================================================================================================================================
 // *********************************     EVENT LISTENERS and BACKGROUND IMAGE Handling     *****************************************
 // ======================================================================================================================================
     // This part includes event listeners for when the DOM is fully loaded. It initializes various elements on the page, sets up a preloader, 
     // and handles the display of background images in a slideshow rotating  every 10 seconds.
+
+
 
 // EVENT LISTENER - SETUP THE PRELOADER WHILST THE API IS LOADING
 // Initial setup of page - preloader and current temperature
