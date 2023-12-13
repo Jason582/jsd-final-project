@@ -314,6 +314,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentTempElement = document.getElementById('current-temperature');
     // The currentTempElement variable contains the DOM element that will display the current temperature on page
 
+    const forecastDiv = document.getElementById('forecast');
+    // The forecastDiv variable contains the DOM element that will display the 7 day weather forecast
+
+    // THIS LOADS AND DISPLAYS THE BACKGROUND IMAGES AND ANIMATIONS //
+    // The DOMContentLoaded event fires when the initial HTML document has been completely 
+    // loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
+
+    const backgroundImageElement = document.getElementById('background-img');
+    // Retrieves the DOM element with the ID 'background-img', which is intended to display the background image.
+
+    const backgroundImages = [ // Creates an array backgroundImages containing URLs of background images...
+
+        'https://chatelaine.com/wp-content/uploads/2021/06/summer-weather-canada-2021-environment-canada.jpg',
+        'https://ireporteronline.com.ng/wp-content/uploads/2023/09/Rain.jpg',
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg/1200px-Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg',
+        'https://cdn.fstoppers.com/styles/large-16-9/s3/lead/2022/04/img-90dad494-faa0-4591-85d9-7695a7c38f54.jpeg',
+        'https://www.almanac.com/sites/default/files/styles/or/public/image_nodes/sunset-beach.jpeg?itok=fnnrbsVE',
+        'https://media.istockphoto.com/id/922668632/photo/residential-street-covered-with-fresh-snow-during-a-blizzard.jpg?s=612x612&w=0&k=20&c=c_LRE5gsgbdPkdWRAz4AuP30S6zgIxQWUEW0NA6MrC4=',
+        'https://www.visittheusa.com/sites/default/files/styles/hero_l/public/2016-10/Weather_Seasons.__72%20DPI.jpg?itok=Bq3U59BK',
+        // Add more image URLs as needed
+
+    ]; // Array of image URLs
+
     // Show the preloader whilst screen is populating etc
     preloader.style.display = 'flex'; // CSS flexbox layout is used to display the preloader
 
@@ -323,9 +346,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Retrieves DOM elements for displaying current temperature and forecast, calls functions to set up the display of current temperature, 
     // and initiates the process of getting weather and forecast data based on the user's location using the geolocation API.
     // and for the 7 day forecast - ('forecast')
-
-    const forecastDiv = document.getElementById('forecast');
-    // The forecastDiv variable contains the DOM element that will display the 7 day weather forecast
 
     // Get default weather and forecast based on user's location
     getDefaultWeather(); // Calls the getDefaultWeather function, which gets the default weather 
@@ -358,26 +378,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         );
     }
-
-    // THIS LOADS AND DISPLAYS THE BACKGROUND IMAGES AND ANIMATIONS //
-    // The DOMContentLoaded event fires when the initial HTML document has been completely 
-    // loaded and parsed, without waiting for stylesheets, images, and subframes to finish loading.
-
-    const backgroundImageElement = document.getElementById('background-img');
-    // Retrieves the DOM element with the ID 'background-img', which is intended to display the background image.
-
-    const backgroundImages = [ // Creates an array backgroundImages containing URLs of background images...
-
-        'https://chatelaine.com/wp-content/uploads/2021/06/summer-weather-canada-2021-environment-canada.jpg',
-        'https://ireporteronline.com.ng/wp-content/uploads/2023/09/Rain.jpg',
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg/1200px-Port_and_lighthouse_overnight_storm_with_lightning_in_Port-la-Nouvelle.jpg',
-        'https://cdn.fstoppers.com/styles/large-16-9/s3/lead/2022/04/img-90dad494-faa0-4591-85d9-7695a7c38f54.jpeg',
-        'https://www.almanac.com/sites/default/files/styles/or/public/image_nodes/sunset-beach.jpeg?itok=fnnrbsVE',
-        'https://media.istockphoto.com/id/922668632/photo/residential-street-covered-with-fresh-snow-during-a-blizzard.jpg?s=612x612&w=0&k=20&c=c_LRE5gsgbdPkdWRAz4AuP30S6zgIxQWUEW0NA6MrC4=',
-        'https://www.visittheusa.com/sites/default/files/styles/hero_l/public/2016-10/Weather_Seasons.__72%20DPI.jpg?itok=Bq3U59BK',
-        // Add more image URLs as needed
-
-    ]; // Array of image URLs
 
     let currentIndex = 0; // Initializes a variable currentIndex to 0. 
     // This variable will keep track of the index of the current background image.
