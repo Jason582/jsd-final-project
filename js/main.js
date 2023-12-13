@@ -7,12 +7,15 @@
 // **************************************************************************************************************
 
 
-
 // ======================================================================================================================================
 // **********************************************              FUNCTIONS           ***************************************************
 // ======================================================================================================================================
 
-
+// ======================================================================================================================================
+// **********************************************     1   Saving User Location          ***************************************************
+    // This function takes latitude, longitude, and city_district as parameters, then stores this information in the browser's local storage 
+    // under the key 'userLocation' as a JSON string.
+// ======================================================================================================================================
 // THIS SETS UP THE GLOBAL OBJECT PROPERTY LOCALSTORAGE WITH THE USER'S LOCATION - LAT LONG city_district//
 // and keeps the data in the browser's local storage so that the user's location can be retrieved later without making another API request - no expiration time!
 
@@ -25,12 +28,21 @@ function saveUserLocation({ latitude, longitude, city_district }) {
 
     // ***************************************************************************************
 
-    // console.log(`LocalStorage =`, localStorage); UNCOMMENT TO SHOW LOCALSTORAGE IN CONSOLE
+    // UNCOMMENT TO SHOW LOCALSTORAGE IN CONSOLE
+    // console.log(`LocalStorage =`, localStorage); 
     // to debug and see the data in the console in case of any errors
 
     // ***************************************************************************************
 
 }; // So, when you call saveUserLocation with an object containing latitude, longitude, and city_district, it will store that information in the browser's localStorage under the key 'userLocation'
+
+
+
+// ======================================================================================================================================
+// **********************************************     2   Getting Current Temperature     ************************************************
+// ======================================================================================================================================
+// This function initiates the process of obtaining the user's geolocation. Upon success, it calls getCurrentTemp to fetch and display the 
+// current temperature.
 
 // THE Geolocation.getCurrentPosition() METHOD IS USED TO GET THE CURRENT POSITION OF THE DEVICE.
 // the setupCurrentTemp function is designed to initiate the process of obtaining the user's geolocation, handling both successful and unsuccessful cases. If successful, it then calls another function (getCurrentTemp) to fetch and display the current temperature based on the user's location. 
@@ -59,7 +71,12 @@ function setupCurrentTemp(currentTempElement) {
     );
 
 
-    // USING THE FIRST API OPEN METRO TO GET THE CURRENT TEMPERATURE //
+// ======================================================================================================================================
+// **************************************    3 (2 continued) Getting Current Temperature    *********************************************
+// ======================================================================================================================================
+    // This function constructs the API URL for Open Meteo to get the current temperature and uses Axios for making an HTTP request. 
+    // It also handles the response and saves the user's location to local storage./
+
 
     function getCurrentTemp(latitude, longitude) {
 
@@ -121,7 +138,13 @@ function setupCurrentTemp(currentTempElement) {
     } // getCurrentTemp
 
 
-    //  Using the OPENCAGE GEOCODING API for FORWARD GEOCODING and RETRIEVE the SUBURB LOCATION
+
+// ======================================================================================================================================
+// *********************************     4   Reverse Geocoding (Getting City/Suburb Name)     **************************************
+// ======================================================================================================================================
+// This function uses the OpenCage Geocoding API to perform reverse geocoding and retrieve the city or suburb name based on the 
+// provided latitude and longitude.
+
 
     function getCityDistrict(latitude, longitude) { // The getCityDistrict function takes the latitude and longitude as arguments
 
@@ -170,8 +193,12 @@ function setupCurrentTemp(currentTempElement) {
     }; // getCityDistrict
 
 
-    // THIS DISPLAYS THE CURRENT TEMPERATURE IN YOUR SUBURB USING THE city_district(Suburb) and currentTemperature variables //
-    // and handles the error if its not available
+
+// ======================================================================================================================================
+// *********************************     5   Displaying Current Temperature     **************************************
+// ======================================================================================================================================
+    // This function takes the data and a DOM element (currentTempElement) and displays the current temperature on the page. 
+    // THIS DISPLAYS THE CURRENT TEMPERATURE IN YOUR SUBURB USING THE city_district(Suburb) and currentTemperature variables
 
     function showCurrentTemp(data, currentTempElement) {
         // The showCurrentTemp function takes the data and DOM element (currentTempElement) as arguments
@@ -205,6 +232,12 @@ function setupCurrentTemp(currentTempElement) {
 }; // setupCurrentTemp
 
 
+
+// ======================================================================================================================================
+// *********************************     6   Getting 7-Day Forecast     **************************************
+// ======================================================================================================================================
+    // This function constructs the API URL for Open Meteo to get the 7-day forecast and uses Axios for making an HTTP request. 
+
 // THIS GETS THE 7 DAYS FORECAST //the getWeatherAndForecast function fetches weather and forecast data from the Open Meteo API based on the provided latitude and longitude. It uses Axios for the HTTP request, handles both successful and error cases, and calls a function (displayWeatherForecast) to handle the rendering of the weather forecast on the page.
 
 
@@ -236,6 +269,14 @@ function getWeatherAndForecast(latitude, longitude) {
         }); // Handle the error
 }; // getWeatherAndForecast
 
+
+
+
+// ======================================================================================================================================
+// *********************************     7   Displaying 7-Day Forecast     **************************************
+// ======================================================================================================================================
+    // This function takes data from the weather API response and renders the 7-day weather forecast on the web page. 
+    // It creates individual forecast items for each day.
 
 // THIS DISPLAYS THE 7 DAY FORECAST // the displayWeatherForecast function is responsible for rendering the 7-day weather forecast on the web page based on the data received from the weather API. It creates individual forecast items for each day and appends them to the forecast container. If there's an issue with the data, it displays an error message in the forecast container.
 
@@ -296,9 +337,10 @@ function displayWeatherForecast(data) {
 
 
 // ======================================================================================================================================
-// **********************************************              EVENT LISTENERS           *****************  *****************************
+// *********************************     EVENT LISTENERS and BACKGROUND IMAGE Handling     *****************************************
 // ======================================================================================================================================
-
+    // This part includes event listeners for when the DOM is fully loaded. It initializes various elements on the page, sets up a preloader, 
+    // and handles the display of background images in a slideshow rotating  every 10 seconds.
 
 // EVENT LISTENER - SETUP THE PRELOADER WHILST THE API IS LOADING
 // Initial setup of page - preloader and current temperature
