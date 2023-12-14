@@ -43,3 +43,5 @@ Error handling is implemented for geolocation and API requests.
 It's a script that combines geolocation, weather API requests, background image cycling, and local storage for a dynamic weather application.
 
 FURTHER WORK: Would like to expand on the current design both visually and functionally, perhaps include features that convert 'date' json data to days of the week so it feels more personal. Could also perhaps include a form for users to check weather patterns somewhere else in case of future trips etc.
+
+https://jason582.github.io/jsd-final-project/
